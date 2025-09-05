@@ -43,7 +43,7 @@ public class DataPackageAdapter(IDataPackageHandler? DataPackageHandler = null) 
     /// <param name="socketDataConverter"></param>
     /// <param name="entity"></param>
     /// <returns></returns>
-    public virtual bool TryConvertTo<TEntity>(ReadOnlyMemory<byte> data, IDataConverter<TEntity> socketDataConverter, out TEntity? entity)
+    public virtual bool TryConvertTo<TEntity>(ReadOnlyMemory<byte> data, IDataConverter<TEntity> socketDataConverter, [NotNullWhen(true)] out TEntity? entity)
     {
         entity = default;
         var ret = socketDataConverter.TryConvertTo(data, out var v);

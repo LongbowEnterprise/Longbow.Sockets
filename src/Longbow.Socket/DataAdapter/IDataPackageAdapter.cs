@@ -45,5 +45,5 @@ public interface IDataPackageAdapter
     /// <param name="entity">When this method returns, contains the converted entity if the conversion was successful; otherwise, the default
     /// value for the type of the entity.</param>
     /// <returns><see langword="true"/> if the conversion was successful; otherwise, <see langword="false"/>.</returns>
-    bool TryConvertTo<TEntity>(ReadOnlyMemory<byte> data, IDataConverter<TEntity> socketDataConverter, out TEntity? entity);
+    bool TryConvertTo<TEntity>(ReadOnlyMemory<byte> data, IDataConverter<TEntity> socketDataConverter, [NotNullWhen(true)] out TEntity? entity);
 }
