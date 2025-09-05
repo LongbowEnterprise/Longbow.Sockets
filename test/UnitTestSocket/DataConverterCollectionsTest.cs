@@ -5,7 +5,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using UnitTestSocket;
 
 namespace UnitTestSocket;
 
@@ -68,7 +67,7 @@ public class DataConverterCollectionsTest
     {
         var converter = new DataConverter<MockConvertEntity>();
         var data = new byte[] { 0x1, 0x2, 0x3, 0x4, 0x5, 0x3, 0x4, 0x31, 0x09, 0x10, 0x40, 0x09, 0x1E, 0xB8, 0x51, 0xEB, 0x85, 0x1F, 0x40, 0x49, 0x0F, 0xDB, 0x23, 0x24, 0x25, 0x26, 0x01, 0x01, 0x29 };
-        var result = converter.TryConvertTo(data, out var entity);
+        var result = converter.TryConvertTo(data, out _);
         Assert.True(result);
     }
 
