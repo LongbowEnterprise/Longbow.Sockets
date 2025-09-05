@@ -3,6 +3,7 @@
 // Website: https://github.com/LongbowExtensions/
 
 using Longbow.Socket.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace UnitTestSocket;
 
@@ -15,5 +16,30 @@ public class SocketLoggingTest
         SocketLogging.LogInformation("Information");
         SocketLogging.LogWarning("Warning");
         SocketLogging.LogDebug("Debug");
+
+        Assert.False(SocketLogging.Inited);
+
+        SocketLogging.Init(new MockLogger());
+        Assert.True(SocketLogging.Inited);
+
+        SocketLogging.LogError(new Exception());
+        SocketLogging.LogInformation("Information");
+        SocketLogging.LogWarning("Warning");
+        SocketLogging.LogDebug("Debug");
+    }
+
+    class MockLogger : ILogger<SocketLoggingTest>
+    {
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull
+        {
+            return null;
+        }
+
+        public bool IsEnabled(LogLevel logLevel) => true;
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        {
+
+        }
     }
 }
