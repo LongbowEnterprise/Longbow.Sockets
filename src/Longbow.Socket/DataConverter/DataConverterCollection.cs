@@ -11,7 +11,7 @@ namespace Longbow.Socket.DataConverters;
 /// <summary>
 /// 数据转换器集合类
 /// </summary>
-public sealed class DataConverterCollections
+public sealed class DataConverterCollection
 {
     readonly ConcurrentDictionary<Type, IDataConverter> _converters = new();
     readonly ConcurrentDictionary<MemberInfo, DataPropertyConverterAttribute> _propertyConverters = new();

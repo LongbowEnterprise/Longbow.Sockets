@@ -5,7 +5,7 @@
 namespace Longbow.Socket.Algorithm;
 
 /// <summary>
-/// Modubs CRC-16 查表算法
+/// Modbus CRC-16 查表算法
 /// </summary>
 public static class ModbusCrc16
 {
