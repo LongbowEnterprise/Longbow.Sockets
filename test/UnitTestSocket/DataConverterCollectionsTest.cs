@@ -5,6 +5,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Reflection;
 
 namespace UnitTestSocket;
 
@@ -44,6 +45,8 @@ public class DataConverterCollectionsTest
         var ret = service.Value.TryGetTypeConverter<MockEntity>(out var converter);
         Assert.True(ret);
         Assert.NotNull(converter);
+        var result = converter.TryConvertTo(new byte[] { 0x1, 0x2, 0x3, 0x4, 0x5 }, out _);
+        Assert.True(result);
 
         var fakeConverter = service.Value.TryGetTypeConverter<Foo>(out var fooConverter);
         Assert.False(fakeConverter);
@@ -60,6 +63,10 @@ public class DataConverterCollectionsTest
 
         ret = service.Value.TryGetPropertyConverter<MockEntity>(entity => entity.ToString(), out _);
         Assert.False(ret);
+
+        var attribute = typeof(MockConvertEntity).GetCustomAttribute<DataTypeConverterAttribute>(false);
+        Assert.NotNull(attribute);
+        Assert.NotNull(attribute.Type);
     }
 
     [Fact]
@@ -71,6 +78,26 @@ public class DataConverterCollectionsTest
         Assert.True(result);
     }
 
+    [Fact]
+    public void TryConverter_Failed()
+    {
+        var converter = new MockDataConverter();
+        converter.TryConvertTo(new byte[] { 0x01, 0x02 }, out _);
+        Assert.True(converter.Failed);
+    }
+
+    class MockDataConverter : DataConverter<MockEntity>
+    {
+        private bool _failed = false;
+        protected override bool Parse(ReadOnlyMemory<byte> data, MockEntity entity)
+        {
+            _failed = true;
+            throw new Exception("test");
+        }
+
+        public bool Failed => _failed;
+    }
+
     class MockEntity
     {
         public byte[]? Header { get; set; }
@@ -78,6 +105,7 @@ public class DataConverterCollectionsTest
         public byte[]? Body { get; set; }
     }
 
+    [DataTypeConverter(Type = typeof(MockConvertEntity))]
     class MockConvertEntity
     {
         [DataPropertyConverter(Type = typeof(byte[]), Offset = 0, Length = 5)]
