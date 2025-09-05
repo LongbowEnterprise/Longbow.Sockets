@@ -5,7 +5,7 @@
 namespace Longbow.Socket.DataConverters;
 
 /// <summary>
-/// Represents an attribute used to specify a custom data converter for a class. 
+/// Represents an attribute used to specify a custom data converter for a class.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class)]
 public class DataTypeConverterAttribute : Attribute
