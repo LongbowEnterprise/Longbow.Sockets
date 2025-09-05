@@ -9,13 +9,13 @@ using System.Reflection;
 
 namespace UnitTestSocket;
 
-public class DataConverterCollectionsTest
+public class DataConverterCollectionTest
 {
     [Fact]
     public void TryGetConverter_Inject()
     {
         var sc = new ServiceCollection();
-        sc.Configure<DataConverterCollections>(options =>
+        sc.Configure<DataConverterCollection>(options =>
         {
             options.AddTypeConverter<MockEntity>();
             options.AddPropertyConverter<MockEntity>(entity => entity.Header, new DataPropertyConverterAttribute()
@@ -39,7 +39,7 @@ public class DataConverterCollectionsTest
         });
 
         var provider = sc.BuildServiceProvider();
-        var service = provider.GetRequiredService<IOptions<DataConverterCollections>>();
+        var service = provider.GetRequiredService<IOptions<DataConverterCollection>>();
         Assert.NotNull(service.Value);
 
         var ret = service.Value.TryGetTypeConverter<MockEntity>(out var converter);

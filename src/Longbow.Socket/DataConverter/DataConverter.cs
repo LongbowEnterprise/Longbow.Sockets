@@ -10,7 +10,7 @@ namespace Longbow.Socket.DataConverters;
 /// Provides a base class for converting socket data into a specified entity type.
 /// </summary>
 /// <typeparam name="TEntity">The type of entity to convert the socket data into.</typeparam>
-public class DataConverter<TEntity>(DataConverterCollections converters) : IDataConverter<TEntity>
+public class DataConverter<TEntity>(DataConverterCollection converters) : IDataConverter<TEntity>
 {
     /// <summary>
     /// 构造函数
