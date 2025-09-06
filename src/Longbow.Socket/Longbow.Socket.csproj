@@ -11,7 +11,7 @@
 
   <PropertyGroup>
     <IsPackable>true</IsPackable>
-    <RepositoryUrl>https://github.com/LongbowEnterprise/LongbowExtensions?wt.mc_id=DT-MVP-5004174</RepositoryUrl>
+    <RepositoryUrl>https://github.com/LongbowEnterprise/Longbow.Socket?wt.mc_id=DT-MVP-5004174</RepositoryUrl>
     <PackageProjectUrl></PackageProjectUrl>
     <RepositoryType>github</RepositoryType>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
