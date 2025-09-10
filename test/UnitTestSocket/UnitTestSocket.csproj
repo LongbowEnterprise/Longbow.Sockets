@@ -22,13 +22,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Longbow.Socket\Longbow.Socket.csproj" />
+    <ProjectReference Include="..\..\src\Longbow.Sockets\Longbow.Sockets.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Using Include="Longbow.Socket.DataAdapters" />
-    <Using Include="Longbow.Socket.DataHandlers" />
-    <Using Include="Longbow.Socket.DataConverters" />
+    <Using Include="Longbow.Sockets.DataAdapters" />
+    <Using Include="Longbow.Sockets.DataHandlers" />
+    <Using Include="Longbow.Sockets.DataConverters" />
     <Using Include="System.Diagnostics.CodeAnalysis" />
     <Using Include="Xunit" />
     <Using Include="Xunit.Abstractions" />
