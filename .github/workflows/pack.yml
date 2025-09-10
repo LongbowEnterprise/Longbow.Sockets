@@ -25,6 +25,6 @@ jobs:
         Bundle: True
 
       run: |
-        dotnet build src/Longbow.Socket
-        dotnet pack src/Longbow.Socket -c Release -o publish
-        dotnet nuget push publish/Longbow.Socket.*.nupkg -s https://api.nuget.org/v3/index.json -k $NUGET_API_KEY --skip-duplicate
+        dotnet build src/Longbow.Sockets
+        dotnet pack src/Longbow.Sockets -c Release -o publish
+        dotnet nuget push publish/Longbow.Sockets.*.nupkg -s https://api.nuget.org/v3/index.json -k $NUGET_API_KEY --skip-duplicate

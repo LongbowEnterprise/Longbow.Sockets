@@ -2,7 +2,7 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 // Website: https://github.com/LongbowExtensions/
 
-using Longbow.Socket.Logging;
+using Longbow.Sockets.Logging;
 using Microsoft.Extensions.Logging;
 
 namespace UnitTestSocket;
