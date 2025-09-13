@@ -7,6 +7,7 @@
   <PropertyGroup>
     <PackageTags>Longbow Socket</PackageTags>
     <Description>Longbow extensions of Socket</Description>
+    <DocumentationFile>$(MSBuildProjectName).xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup>
