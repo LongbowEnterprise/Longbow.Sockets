@@ -122,10 +122,9 @@ This project is licensed under the [Apache License](LICENSE). See the `LICENSE` 
 
 ## 🔗 Related Links
 
-- [Gitee Project Home](https://gitee.com/LongbowEnterprise/Longbow.Sockets)
-- [Github Project Home](https://github.com/LongbowEnterprise/Longbow.Sockets)
-- [NuGet Package](https://www.nuget.org/packages/Longbow.Sockets)
+- [Github Project Home](https://github.com/LongbowEnterprise/Longbow.Sockets?wt.mc_id=DT-MVP-5004174)
+- [NuGet Package](https://www.nuget.org/packages/Longbow.Sockets?wt.mc_id=DT-MVP-5004174)
 
 ## 📞 Contact
 
-To contact the developers, please visit the project homepage or submit issues to [Gitee Issues](https://gitee.com/LongbowEnterprise/Longbow.Sockets/issues) or [Github Issues](https://github.com/LongbowEnterprise/Longbow.Sockets/issues).
+To contact the developers, please visit the project homepage or submit issues to [Github Issues](https://github.com/LongbowEnterprise/Longbow.Sockets/issues?wt.mc_id=DT-MVP-5004174).
