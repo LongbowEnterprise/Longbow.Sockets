@@ -31,7 +31,13 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="$(NET9Version)" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <PackageReadmeFile>readme.md</PackageReadmeFile>
+    <PackageReleaseNotes></PackageReleaseNotes>
+  </PropertyGroup>
+
   <ItemGroup>
+    <None Include="readme.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>
