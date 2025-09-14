@@ -45,7 +45,6 @@
     <Using Include="Longbow.Sockets.DataAdapters" />
     <Using Include="Longbow.Sockets.DataHandlers" />
     <Using Include="Longbow.Sockets.DataConverters" />
-    <Using Include="Longbow.Sockets.Logging" />
   </ItemGroup>
 
 </Project>
