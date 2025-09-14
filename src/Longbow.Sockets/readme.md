@@ -123,7 +123,6 @@ This project is licensed under the [Apache License](LICENSE). See the `LICENSE` 
 ## 🔗 Related Links
 
 - [Github Project Home](https://github.com/LongbowEnterprise/Longbow.Sockets?wt.mc_id=DT-MVP-5004174)
-- [NuGet Package](https://www.nuget.org/packages/Longbow.Sockets?wt.mc_id=DT-MVP-5004174)
 
 ## 📞 Contact
 
