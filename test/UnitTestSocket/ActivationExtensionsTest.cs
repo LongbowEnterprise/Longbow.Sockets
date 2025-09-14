@@ -28,14 +28,15 @@ public class ActivationExtensionsTest
     }
 
     [Fact]
-    public void Activation_Fail()
+    public void Activation_Exception()
     {
         var type = typeof(string);
-        var o = type.CreateInstance([123]);
-        Assert.Null(o);
+        var ex = Assert.ThrowsAny<MissingMethodException>(() => type.CreateInstance([123]));
+        Assert.NotNull(ex);
 
-        var foo = type.CreateInstance<Foo>();
-        Assert.Null(foo);
+        ex = null;
+        ex = Assert.ThrowsAny<MissingMethodException>(() => type.CreateInstance<Foo>());
+        Assert.NotNull(ex);
     }
 
     class MockNestEntity(float rate)

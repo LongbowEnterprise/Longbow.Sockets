@@ -29,18 +29,11 @@ public class DataConverter<TEntity>(DataConverterCollection converters) : IDataC
     {
         var ret = false;
         entity = default;
-        try
+        var v = CreateEntity();
+        if (Parse(data, v))
         {
-            var v = CreateEntity();
-            if (Parse(data, v))
-            {
-                entity = v;
-                ret = true;
-            }
-        }
-        catch (Exception ex)
-        {
-            SocketLogging.LogError(ex, $"DataConverter {nameof(TryConvertTo)} failed");
+            entity = v;
+            ret = true;
         }
         return ret;
     }
@@ -77,7 +70,7 @@ public class DataConverter<TEntity>(DataConverterCollection converters) : IDataC
                     }
                     else
                     {
-                        SocketLogging.LogInformation($"{nameof(Parse)} failed. Start: {attr.Offset}. Length: {attr.Length}. Can't convert value from {GetValueType(valueType)} to {p.Name}({p.PropertyType})");
+                        throw new InvalidOperationException($"Property '{p.Name}' type '{GetValueType(p.PropertyType)}' is not assignable from value type '{GetValueType(valueType)}'.");
                     }
                 }
             }

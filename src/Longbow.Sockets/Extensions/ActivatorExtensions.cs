@@ -21,16 +21,7 @@ public static class ActivatorExtensions
     {
         var bindings = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
 
-        object? instance = null;
-        try
-        {
-            instance = Activator.CreateInstance(type, bindings, null, args, null);
-        }
-        catch (Exception ex)
-        {
-            SocketLogging.LogError(ex, $"Create Instance {type.FullName} failed");
-        }
-        return instance;
+        return Activator.CreateInstance(type, bindings, null, args, null);
     }
 
     /// <summary>
