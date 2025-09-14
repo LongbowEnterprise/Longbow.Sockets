@@ -13,25 +13,7 @@ namespace Longbow.Sockets.DataConverters;
 /// </summary>
 public sealed class DataConverterCollection
 {
-    readonly ConcurrentDictionary<Type, IDataConverter> _converters = new();
     readonly ConcurrentDictionary<MemberInfo, DataPropertyConverterAttribute> _propertyConverters = new();
-
-    /// <summary>
-    /// 增加指定 <see cref="IDataConverter{TEntity}"/> 数据类型转换器方法
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    /// <param name="converter"></param>
-    public void AddTypeConverter<TEntity>(IDataConverter<TEntity> converter)
-    {
-        var type = typeof(TEntity);
-        _converters.AddOrUpdate(type, t => converter, (t, v) => converter);
-    }
-
-    /// <summary>
-    /// 增加默认数据类型转换器方法 转换器使用 <see cref="DataConverter{TEntity}"/>
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    public void AddTypeConverter<TEntity>() => AddTypeConverter(new DataConverter<TEntity>(this));
 
     /// <summary>
     /// 添加属性类型转化器方法
@@ -49,22 +31,6 @@ public sealed class DataConverterCollection
             }
             _propertyConverters.AddOrUpdate(memberExpression.Member, m => attribute, (m, v) => attribute);
         }
-    }
-
-    /// <summary>
-    /// 获得指定数据类型转换器方法
-    /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    public bool TryGetTypeConverter<TEntity>([NotNullWhen(true)] out IDataConverter<TEntity>? converter)
-    {
-        converter = null;
-        var ret = false;
-        if (_converters.TryGetValue(typeof(TEntity), out var v) && v is IDataConverter<TEntity> c)
-        {
-            converter = c;
-            ret = true;
-        }
-        return ret;
     }
 
     /// <summary>
