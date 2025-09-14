@@ -28,16 +28,20 @@ public class DataConverterCollectionTest
             });
 
             // 为提高代码覆盖率 重复添加转换器以后面的为准
-            options.AddPropertyConverter<MockEntity>(entity => entity.Header, new DataPropertyConverterAttribute()
+            options.AddPropertyConverter<MockEntity>(entity => entity.Body, new DataPropertyConverterAttribute()
             {
-                Offset = 0,
-                Length = 5
+                Offset = 2,
+                Length = 3
             });
         });
 
         var provider = sc.BuildServiceProvider();
         var service = provider.GetRequiredService<IOptions<DataConverterCollection>>();
         Assert.NotNull(service.Value);
+
+        var converter = new DataConverter<MockEntity>(service.Value);
+        var data = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
+        converter.TryConvertTo(data, out _);
     }
 
     [Fact]
