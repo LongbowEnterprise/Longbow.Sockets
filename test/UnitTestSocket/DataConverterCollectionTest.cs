@@ -58,61 +58,58 @@ public class DataConverterCollectionTest
 
     class MockConvertEntity
     {
-        [DataPropertyConverter(Type = typeof(byte[]), Offset = 0, Length = 5)]
+        [DataPropertyConverter(Offset = 0, Length = 5)]
         public byte[]? Header { get; set; }
 
-        [DataPropertyConverter(Type = typeof(byte[]), Offset = 5, Length = 2)]
+        [DataPropertyConverter(Offset = 5, Length = 2)]
         public byte[]? Body { get; set; }
 
-        [DataPropertyConverter(Type = typeof(string), Offset = 7, Length = 1, EncodingName = "utf-8")]
+        [DataPropertyConverter(Offset = 7, Length = 1, EncodingName = "utf-8")]
         public string? Value1 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(int), Offset = 8, Length = 1)]
+        [DataPropertyConverter(Offset = 8, Length = 1)]
         public int Value2 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(long), Offset = 9, Length = 1)]
+        [DataPropertyConverter(Offset = 9, Length = 1)]
         public long Value3 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(double), Offset = 10, Length = 8)]
+        [DataPropertyConverter(Offset = 10, Length = 8)]
         public double Value4 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(float), Offset = 18, Length = 4)]
+        [DataPropertyConverter(Offset = 18, Length = 4)]
         public float Value5 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(short), Offset = 22, Length = 1)]
+        [DataPropertyConverter(Offset = 22, Length = 1)]
         public short Value6 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(ushort), Offset = 23, Length = 1)]
+        [DataPropertyConverter(Offset = 23, Length = 1)]
         public ushort Value7 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(uint), Offset = 24, Length = 1)]
+        [DataPropertyConverter(Offset = 24, Length = 1)]
         public uint Value8 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(ulong), Offset = 25, Length = 1)]
+        [DataPropertyConverter(Offset = 25, Length = 1)]
         public ulong Value9 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(bool), Offset = 26, Length = 1)]
+        [DataPropertyConverter(Offset = 26, Length = 1)]
         public bool Value10 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(EnumEducation), Offset = 27, Length = 1)]
+        [DataPropertyConverter(Offset = 27, Length = 1)]
         public EnumEducation Value11 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(Foo), Offset = 28, Length = 1, ConverterType = typeof(FooConverter), ConverterParameters = ["test"])]
+        [DataPropertyConverter(Offset = 28, Length = 1, ConverterType = typeof(FooConverter), ConverterParameters = ["test"])]
         public Foo? Value12 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(string), Offset = 7, Length = 1)]
+        [DataPropertyConverter(Offset = 7, Length = 1)]
         public string? Value14 { get; set; }
 
         public string? Value13 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(byte), Offset = 0, Length = 1)]
+        [DataPropertyConverter(Offset = 0, Length = 1)]
         public byte Value15 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(byte), ConverterType = typeof(MockNullConverter), Offset = 0, Length = 1)]
-        public byte Value16 { get; set; }
-
-        [DataPropertyConverter(Type = typeof(byte[]), Offset = 0, Length = 1)]
-        public byte Value17 { get; set; }
+        [DataPropertyConverter(Offset = 0, Length = 1, ConverterType = typeof(MockNullConverter))]
+        public byte? Value16 { get; set; }
     }
 
     class MockNullConverter : IDataPropertyConverter
