@@ -37,10 +37,10 @@ public class DataPackageAdapterTest
 
     class MockEntity
     {
-        [DataPropertyConverter(Type = typeof(byte[]), Offset = 0, Length = 2)]
+        [DataPropertyConverter(Offset = 0, Length = 2)]
         public byte[]? Header { get; set; }
 
-        [DataPropertyConverter(Type = typeof(byte[]), Offset = 2, Length = 3)]
+        [DataPropertyConverter(Offset = 2, Length = 3)]
         public byte[]? Body { get; set; }
     }
 }

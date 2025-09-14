@@ -5,7 +5,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Reflection;
 
 namespace UnitTestSocket;
 
@@ -17,7 +16,6 @@ public class DataConverterCollectionTest
         var sc = new ServiceCollection();
         sc.Configure<DataConverterCollection>(options =>
         {
-            options.AddTypeConverter<MockEntity>();
             options.AddPropertyConverter<MockEntity>(entity => entity.Header, new DataPropertyConverterAttribute()
             {
                 Offset = 0,
@@ -30,11 +28,10 @@ public class DataConverterCollectionTest
             });
 
             // 为提高代码覆盖率 重复添加转换器以后面的为准
-            options.AddTypeConverter<MockEntity>();
-            options.AddPropertyConverter<MockEntity>(entity => entity.Header, new DataPropertyConverterAttribute()
+            options.AddPropertyConverter<MockEntity>(entity => entity.Body, new DataPropertyConverterAttribute()
             {
-                Offset = 0,
-                Length = 5
+                Offset = 2,
+                Length = 3
             });
         });
 
@@ -42,31 +39,18 @@ public class DataConverterCollectionTest
         var service = provider.GetRequiredService<IOptions<DataConverterCollection>>();
         Assert.NotNull(service.Value);
 
-        var ret = service.Value.TryGetTypeConverter<MockEntity>(out var converter);
-        Assert.True(ret);
-        Assert.NotNull(converter);
-        var result = converter.TryConvertTo(new byte[] { 0x1, 0x2, 0x3, 0x4, 0x5 }, out _);
-        Assert.True(result);
+        var collection = service.Value;
+        var converter = new DataConverter<MockEntity>(collection);
+        var data = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
+        converter.TryConvertTo(data, out _);
 
-        var fakeConverter = service.Value.TryGetTypeConverter<Foo>(out var fooConverter);
-        Assert.False(fakeConverter);
-        Assert.Null(fooConverter);
+        var f = collection.TryGetPropertyConverter<MockEntity>(entity => entity.Header, out var headerConverter);
+        Assert.True(f);
+        Assert.NotNull(headerConverter);
 
-        ret = service.Value.TryGetPropertyConverter<MockEntity>(entity => entity.Header, out var propertyConverterAttribute);
-        Assert.True(ret);
-        Assert.NotNull(propertyConverterAttribute);
-        Assert.True(propertyConverterAttribute is { Offset: 0, Length: 5 });
-
-        ret = service.Value.TryGetPropertyConverter<Foo>(entity => entity.Name, out var fooPropertyConverterAttribute);
-        Assert.False(ret);
-        Assert.Null(fooPropertyConverterAttribute);
-
-        ret = service.Value.TryGetPropertyConverter<MockEntity>(entity => entity.ToString(), out _);
-        Assert.False(ret);
-
-        var attribute = typeof(MockConvertEntity).GetCustomAttribute<DataTypeConverterAttribute>(false);
-        Assert.NotNull(attribute);
-        Assert.NotNull(attribute.Type);
+        f = collection.TryGetPropertyConverter<MockEntity>(entity => entity.Test(), out var bodyConverter);
+        Assert.False(f);
+        Assert.Null(bodyConverter);
     }
 
     [Fact]
@@ -79,23 +63,21 @@ public class DataConverterCollectionTest
     }
 
     [Fact]
-    public void TryConverter_Failed()
+    public void TryConvertTo_Exception()
     {
-        var converter = new MockDataConverter();
-        converter.TryConvertTo(new byte[] { 0x01, 0x02 }, out _);
-        Assert.True(converter.Failed);
-    }
+        // 值类型不可为空
+        var converter = new DataConverter<MockExceptionEntity>();
+        var data = new byte[] { 0x01, 0x02 };
+        var v = Assert.ThrowsAny<InvalidOperationException>(() => converter.TryConvertTo(data, out _));
+        Assert.NotNull(v);
 
-    class MockDataConverter : DataConverter<MockEntity>
-    {
-        private bool _failed = false;
-        protected override bool Parse(ReadOnlyMemory<byte> data, MockEntity entity)
-        {
-            _failed = true;
-            throw new Exception("test");
-        }
-
-        public bool Failed => _failed;
+        // int? 可为空
+        // Foo 可为空引用类型
+        var converter1 = new DataConverter<MockValidEntity>();
+        var actual = converter1.TryConvertTo(data, out var d);
+        Assert.True(actual);
+        Assert.NotNull(d);
+        Assert.Null(d.Value);
     }
 
     class MockEntity
@@ -103,66 +85,76 @@ public class DataConverterCollectionTest
         public byte[]? Header { get; set; }
 
         public byte[]? Body { get; set; }
+
+        public object? Test() { return null; }
     }
 
-    [DataTypeConverter(Type = typeof(MockConvertEntity))]
+    class MockExceptionEntity
+    {
+        [DataPropertyConverter(Offset = 0, Length = 1, ConverterType = typeof(MockNullConverter))]
+        public int Value { get; set; }
+    }
+
+    class MockValidEntity
+    {
+        [DataPropertyConverter(Offset = 0, Length = 1, ConverterType = typeof(MockNullConverter))]
+        public Foo Value { get; set; } = new();
+    }
+
     class MockConvertEntity
     {
-        [DataPropertyConverter(Type = typeof(byte[]), Offset = 0, Length = 5)]
+        [DataPropertyConverter(Offset = 0, Length = 5)]
         public byte[]? Header { get; set; }
 
-        [DataPropertyConverter(Type = typeof(byte[]), Offset = 5, Length = 2)]
+        [DataPropertyConverter(Offset = 5, Length = 2)]
         public byte[]? Body { get; set; }
 
-        [DataPropertyConverter(Type = typeof(string), Offset = 7, Length = 1, EncodingName = "utf-8")]
+        [DataPropertyConverter(Offset = 7, Length = 1, EncodingName = "utf-8")]
         public string? Value1 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(int), Offset = 8, Length = 1)]
+        [DataPropertyConverter(Offset = 8, Length = 1)]
         public int Value2 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(long), Offset = 9, Length = 1)]
+        [DataPropertyConverter(Offset = 9, Length = 1)]
         public long Value3 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(double), Offset = 10, Length = 8)]
+        [DataPropertyConverter(Offset = 10, Length = 8)]
         public double Value4 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(float), Offset = 18, Length = 4)]
+        [DataPropertyConverter(Offset = 18, Length = 4)]
         public float Value5 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(short), Offset = 22, Length = 1)]
+        [DataPropertyConverter(Offset = 22, Length = 1)]
         public short Value6 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(ushort), Offset = 23, Length = 1)]
+        [DataPropertyConverter(Offset = 23, Length = 1)]
         public ushort Value7 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(uint), Offset = 24, Length = 1)]
+        [DataPropertyConverter(Offset = 24, Length = 1)]
         public uint Value8 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(ulong), Offset = 25, Length = 1)]
+        [DataPropertyConverter(Offset = 25, Length = 1)]
         public ulong Value9 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(bool), Offset = 26, Length = 1)]
+        [DataPropertyConverter(Offset = 26, Length = 1)]
         public bool Value10 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(EnumEducation), Offset = 27, Length = 1)]
+        [DataPropertyConverter(Offset = 27, Length = 1)]
         public EnumEducation Value11 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(Foo), Offset = 28, Length = 1, ConverterType = typeof(FooConverter), ConverterParameters = ["test"])]
+        [DataPropertyConverter(Offset = 28, Length = 1, ConverterType = typeof(FooConverter), ConverterParameters = ["test"])]
         public Foo? Value12 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(string), Offset = 7, Length = 1)]
+        [DataPropertyConverter(Offset = 7, Length = 1)]
         public string? Value14 { get; set; }
 
         public string? Value13 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(byte), Offset = 0, Length = 1)]
+        [DataPropertyConverter(Offset = 0, Length = 1)]
         public byte Value15 { get; set; }
 
-        [DataPropertyConverter(Type = typeof(byte), ConverterType = typeof(MockNullConverter), Offset = 0, Length = 1)]
-        public byte Value16 { get; set; }
-
-        [DataPropertyConverter(Type = typeof(byte[]), Offset = 0, Length = 1)]
-        public byte Value17 { get; set; }
+        [DataPropertyConverter(Offset = 0, Length = 1, ConverterType = typeof(MockNullConverter))]
+        public byte? Value16 { get; set; }
     }
 
     class MockNullConverter : IDataPropertyConverter

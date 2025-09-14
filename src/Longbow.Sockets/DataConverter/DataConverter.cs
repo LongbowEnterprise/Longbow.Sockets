@@ -60,11 +60,15 @@ public class DataConverter<TEntity>(DataConverterCollection converters) : IDataC
             foreach (var p in properties)
             {
                 var attr = p.GetCustomAttribute<DataPropertyConverterAttribute>(false) ?? GetPropertyConverterAttribute(p);
-                if (attr is { Type: not null })
+                if (attr != null)
                 {
-                    var value = attr.ConvertTo(data);
+                    var value = attr.ConvertTo(p.PropertyType, data);
                     var valueType = value?.GetType();
-                    if (p.PropertyType.IsAssignableFrom(valueType))
+                    if (value == null && IsNullable(p.PropertyType))
+                    {
+                        p.SetValue(entity, null);
+                    }
+                    else if (p.PropertyType.IsAssignableFrom(valueType))
                     {
                         p.SetValue(entity, value);
                     }
@@ -78,6 +82,8 @@ public class DataConverter<TEntity>(DataConverterCollection converters) : IDataC
         }
         return ret;
     }
+
+    private static bool IsNullable(Type type) => !type.IsValueType || Nullable.GetUnderlyingType(type) != null;
 
     private static string GetValueType(Type? type) => type?.FullName ?? "NULL";
 
