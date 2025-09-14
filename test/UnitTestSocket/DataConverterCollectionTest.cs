@@ -39,9 +39,18 @@ public class DataConverterCollectionTest
         var service = provider.GetRequiredService<IOptions<DataConverterCollection>>();
         Assert.NotNull(service.Value);
 
-        var converter = new DataConverter<MockEntity>(service.Value);
+        var collection = service.Value;
+        var converter = new DataConverter<MockEntity>(collection);
         var data = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
         converter.TryConvertTo(data, out _);
+
+        var f = collection.TryGetPropertyConverter<MockEntity>(entity => entity.Header, out var headerConverter);
+        Assert.True(f);
+        Assert.NotNull(headerConverter);
+
+        f = collection.TryGetPropertyConverter<MockEntity>(entity => entity.Test(), out var bodyConverter);
+        Assert.False(f);
+        Assert.Null(bodyConverter);
     }
 
     [Fact]
@@ -67,6 +76,8 @@ public class DataConverterCollectionTest
         public byte[]? Header { get; set; }
 
         public byte[]? Body { get; set; }
+
+        public object? Test() { return null; }
     }
 
     class MockExceptionEntity
