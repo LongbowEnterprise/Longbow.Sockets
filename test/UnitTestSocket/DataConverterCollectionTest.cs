@@ -49,11 +49,26 @@ public class DataConverterCollectionTest
         Assert.True(result);
     }
 
+    [Fact]
+    public void TryConvertTo_Exception()
+    {
+        var converter = new DataConverter<MockExceptionEntity>();
+        var data = new byte[] { 0x01, 0x02 };
+        var v = Assert.ThrowsAny<InvalidOperationException>(() => converter.TryConvertTo(data, out _));
+        Assert.NotNull(v);
+    }
+
     class MockEntity
     {
         public byte[]? Header { get; set; }
 
         public byte[]? Body { get; set; }
+    }
+
+    class MockExceptionEntity
+    {
+        [DataPropertyConverter(Offset = 0, Length = 1, ConverterType = typeof(MockNullConverter))]
+        public Foo Value { get; set; } = new();
     }
 
     class MockConvertEntity
