@@ -18,6 +18,9 @@ public class ActivationExtensionsTest
 
         var foo1 = type.CreateInstance<Foo>();
         Assert.NotNull(foo1);
+
+        var foo2 = type.CreateInstance<MockNestEntity>();
+        Assert.Null(foo2);
     }
 
     [Fact]
