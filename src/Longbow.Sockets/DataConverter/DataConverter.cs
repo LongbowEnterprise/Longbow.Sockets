@@ -83,7 +83,7 @@ public class DataConverter<TEntity>(DataConverterCollection converters) : IDataC
         return ret;
     }
 
-    private static bool IsNullable(Type type) => type.IsValueType || Nullable.GetUnderlyingType(type) != null;
+    private static bool IsNullable(Type type) => !type.IsValueType || Nullable.GetUnderlyingType(type) != null;
 
     private static string GetValueType(Type? type) => type?.FullName ?? "NULL";
 
