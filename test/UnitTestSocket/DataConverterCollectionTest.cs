@@ -65,6 +65,7 @@ public class DataConverterCollectionTest
     [Fact]
     public void TryConvertTo_Exception()
     {
+        // 值类型不可为空
         var converter = new DataConverter<MockExceptionEntity>();
         var data = new byte[] { 0x01, 0x02 };
         var v = Assert.ThrowsAny<InvalidOperationException>(() => converter.TryConvertTo(data, out _));
@@ -83,7 +84,7 @@ public class DataConverterCollectionTest
     class MockExceptionEntity
     {
         [DataPropertyConverter(Offset = 0, Length = 1, ConverterType = typeof(MockNullConverter))]
-        public Foo Value { get; set; } = new();
+        public int Value { get; set; }
     }
 
     class MockConvertEntity
