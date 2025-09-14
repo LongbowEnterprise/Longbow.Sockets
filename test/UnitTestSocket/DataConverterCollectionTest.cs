@@ -70,6 +70,14 @@ public class DataConverterCollectionTest
         var data = new byte[] { 0x01, 0x02 };
         var v = Assert.ThrowsAny<InvalidOperationException>(() => converter.TryConvertTo(data, out _));
         Assert.NotNull(v);
+
+        // int? 可为空
+        // Foo 可为空引用类型
+        var converter1 = new DataConverter<MockValidEntity>();
+        var actual = converter1.TryConvertTo(data, out var d);
+        Assert.True(actual);
+        Assert.NotNull(d);
+        Assert.Null(d.Value);
     }
 
     class MockEntity
@@ -85,6 +93,12 @@ public class DataConverterCollectionTest
     {
         [DataPropertyConverter(Offset = 0, Length = 1, ConverterType = typeof(MockNullConverter))]
         public int Value { get; set; }
+    }
+
+    class MockValidEntity
+    {
+        [DataPropertyConverter(Offset = 0, Length = 1, ConverterType = typeof(MockNullConverter))]
+        public Foo Value { get; set; } = new();
     }
 
     class MockConvertEntity
