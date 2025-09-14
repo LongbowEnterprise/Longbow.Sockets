@@ -5,7 +5,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Reflection;
 
 namespace UnitTestSocket;
 
@@ -17,7 +16,6 @@ public class DataConverterCollectionTest
         var sc = new ServiceCollection();
         sc.Configure<DataConverterCollection>(options =>
         {
-            options.AddTypeConverter<MockEntity>();
             options.AddPropertyConverter<MockEntity>(entity => entity.Header, new DataPropertyConverterAttribute()
             {
                 Offset = 0,
@@ -30,7 +28,6 @@ public class DataConverterCollectionTest
             });
 
             // 为提高代码覆盖率 重复添加转换器以后面的为准
-            options.AddTypeConverter<MockEntity>();
             options.AddPropertyConverter<MockEntity>(entity => entity.Header, new DataPropertyConverterAttribute()
             {
                 Offset = 0,
@@ -41,32 +38,6 @@ public class DataConverterCollectionTest
         var provider = sc.BuildServiceProvider();
         var service = provider.GetRequiredService<IOptions<DataConverterCollection>>();
         Assert.NotNull(service.Value);
-
-        var ret = service.Value.TryGetTypeConverter<MockEntity>(out var converter);
-        Assert.True(ret);
-        Assert.NotNull(converter);
-        var result = converter.TryConvertTo(new byte[] { 0x1, 0x2, 0x3, 0x4, 0x5 }, out _);
-        Assert.True(result);
-
-        var fakeConverter = service.Value.TryGetTypeConverter<Foo>(out var fooConverter);
-        Assert.False(fakeConverter);
-        Assert.Null(fooConverter);
-
-        ret = service.Value.TryGetPropertyConverter<MockEntity>(entity => entity.Header, out var propertyConverterAttribute);
-        Assert.True(ret);
-        Assert.NotNull(propertyConverterAttribute);
-        Assert.True(propertyConverterAttribute is { Offset: 0, Length: 5 });
-
-        ret = service.Value.TryGetPropertyConverter<Foo>(entity => entity.Name, out var fooPropertyConverterAttribute);
-        Assert.False(ret);
-        Assert.Null(fooPropertyConverterAttribute);
-
-        ret = service.Value.TryGetPropertyConverter<MockEntity>(entity => entity.ToString(), out _);
-        Assert.False(ret);
-
-        var attribute = typeof(MockConvertEntity).GetCustomAttribute<DataTypeConverterAttribute>(false);
-        Assert.NotNull(attribute);
-        Assert.NotNull(attribute.Type);
     }
 
     [Fact]
@@ -78,26 +49,6 @@ public class DataConverterCollectionTest
         Assert.True(result);
     }
 
-    [Fact]
-    public void TryConverter_Failed()
-    {
-        var converter = new MockDataConverter();
-        converter.TryConvertTo(new byte[] { 0x01, 0x02 }, out _);
-        Assert.True(converter.Failed);
-    }
-
-    class MockDataConverter : DataConverter<MockEntity>
-    {
-        private bool _failed = false;
-        protected override bool Parse(ReadOnlyMemory<byte> data, MockEntity entity)
-        {
-            _failed = true;
-            throw new Exception("test");
-        }
-
-        public bool Failed => _failed;
-    }
-
     class MockEntity
     {
         public byte[]? Header { get; set; }
@@ -105,7 +56,6 @@ public class DataConverterCollectionTest
         public byte[]? Body { get; set; }
     }
 
-    [DataTypeConverter(Type = typeof(MockConvertEntity))]
     class MockConvertEntity
     {
         [DataPropertyConverter(Type = typeof(byte[]), Offset = 0, Length = 5)]
