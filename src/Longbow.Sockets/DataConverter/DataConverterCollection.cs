@@ -25,10 +25,6 @@ public sealed class DataConverterCollection
     {
         if (propertyExpression.Body is MemberExpression memberExpression)
         {
-            if (attribute.Type == null)
-            {
-                attribute.Type = memberExpression.Type;
-            }
             _propertyConverters.AddOrUpdate(memberExpression.Member, m => attribute, (m, v) => attribute);
         }
     }

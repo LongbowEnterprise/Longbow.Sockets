@@ -6,9 +6,9 @@ namespace Longbow.Sockets.DataConverters;
 
 static class DataPropertyExtensions
 {
-    public static IDataPropertyConverter? GetConverter(this DataPropertyConverterAttribute attribute)
+    public static IDataPropertyConverter? GetConverter(this DataPropertyConverterAttribute attribute, Type type)
     {
-        return attribute.GetConverterByType() ?? attribute.GetDefaultConverter();
+        return attribute.GetConverterByType() ?? attribute.GetDefaultConverter(type);
     }
 
     private static IDataPropertyConverter? GetConverterByType(this DataPropertyConverterAttribute attribute)
@@ -23,69 +23,65 @@ static class DataPropertyExtensions
         return converter;
     }
 
-    private static IDataPropertyConverter? GetDefaultConverter(this DataPropertyConverterAttribute attribute)
+    private static IDataPropertyConverter? GetDefaultConverter(this DataPropertyConverterAttribute attribute, Type type)
     {
         IDataPropertyConverter? converter = null;
-        var type = attribute.Type;
-        if (type != null)
+        if (type == typeof(byte))
         {
-            if (type == typeof(byte))
-            {
-                converter = new DataByteConverter();
-            }
-            else if (type == typeof(byte[]))
-            {
-                converter = new DataByteArrayConverter();
-            }
-            else if (type == typeof(string))
-            {
-                converter = new DataStringConverter(attribute.EncodingName);
-            }
-            else if (type.IsEnum)
-            {
-                converter = new DataEnumConverter(attribute.Type);
-            }
-            else if (type == typeof(bool))
-            {
-                converter = new DataBoolConverter();
-            }
-            else if (type == typeof(short))
-            {
-                converter = new DataInt16BigEndianConverter();
-            }
-            else if (type == typeof(int))
-            {
-                converter = new DataInt32BigEndianConverter();
-            }
-            else if (type == typeof(long))
-            {
-                converter = new DataInt64BigEndianConverter();
-            }
-            else if (type == typeof(float))
-            {
-                converter = new DataSingleBigEndianConverter();
-            }
-            else if (type == typeof(double))
-            {
-                converter = new DataDoubleBigEndianConverter();
-            }
-            else if (type == typeof(ushort))
-            {
-                converter = new DataUInt16BigEndianConverter();
-            }
-            else if (type == typeof(uint))
-            {
-                converter = new DataUInt32BigEndianConverter();
-            }
-            else if (type == typeof(ulong))
-            {
-                converter = new DataUInt64BigEndianConverter();
-            }
+            converter = new DataByteConverter();
+        }
+        else if (type == typeof(byte[]))
+        {
+            converter = new DataByteArrayConverter();
+        }
+        else if (type == typeof(string))
+        {
+            converter = new DataStringConverter(attribute.EncodingName);
+        }
+        else if (type.IsEnum)
+        {
+            converter = new DataEnumConverter(type);
+        }
+        else if (type == typeof(bool))
+        {
+            converter = new DataBoolConverter();
+        }
+        else if (type == typeof(short))
+        {
+            converter = new DataInt16BigEndianConverter();
+        }
+        else if (type == typeof(int))
+        {
+            converter = new DataInt32BigEndianConverter();
+        }
+        else if (type == typeof(long))
+        {
+            converter = new DataInt64BigEndianConverter();
+        }
+        else if (type == typeof(float))
+        {
+            converter = new DataSingleBigEndianConverter();
+        }
+        else if (type == typeof(double))
+        {
+            converter = new DataDoubleBigEndianConverter();
+        }
+        else if (type == typeof(ushort))
+        {
+            converter = new DataUInt16BigEndianConverter();
+        }
+        else if (type == typeof(uint))
+        {
+            converter = new DataUInt32BigEndianConverter();
+        }
+        else if (type == typeof(ulong))
+        {
+            converter = new DataUInt64BigEndianConverter();
         }
         return converter;
     }
 
-    public static object? ConvertTo(this DataPropertyConverterAttribute attribute, ReadOnlyMemory<byte> data)
+    public static object? ConvertTo(this DataPropertyConverterAttribute attribute, Type type, ReadOnlyMemory<byte> data)
     {
         object? ret = null;
         var start = attribute.Offset;
@@ -94,7 +90,7 @@ static class DataPropertyExtensions
         if (data.Length >= start + length)
         {
             var buffer = data.Slice(start, length);
-            var converter = attribute.GetConverter();
+            var converter = attribute.GetConverter(type);
             if (converter != null)
             {
                 ret = converter.Convert(buffer);
