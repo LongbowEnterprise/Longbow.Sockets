@@ -77,10 +77,6 @@ public class DataConverter<TEntity>(DataConverterCollection converters) : IDataC
                     {
                         p.SetValue(entity, value);
                     }
-                    else
-                    {
-                        throw new InvalidOperationException($"Property '{p.Name}' type '{GetValueType(p.PropertyType)}' is not assignable from value type '{GetValueType(valueType)}'.");
-                    }
                 }
             }
             ret = true;
