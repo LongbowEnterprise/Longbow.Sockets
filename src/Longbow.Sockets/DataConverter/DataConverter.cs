@@ -17,6 +17,7 @@ public class DataConverter<TEntity>(DataConverterCollection converters) : IDataC
     /// </summary>
     public DataConverter() : this(new())
     {
+
     }
 
     /// <summary>
