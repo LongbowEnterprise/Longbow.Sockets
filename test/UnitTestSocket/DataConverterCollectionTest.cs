@@ -68,8 +68,8 @@ public class DataConverterCollectionTest
         // 值类型不可为空
         var converter = new DataConverter<MockExceptionEntity>();
         var data = new byte[] { 0x01, 0x02 };
-        var v = Assert.ThrowsAny<InvalidOperationException>(() => converter.TryConvertTo(data, out _));
-        Assert.NotNull(v);
+        var result = converter.TryConvertTo(data, out _);
+        Assert.False(result);
 
         // int? 可为空
         // Foo 可为空引用类型
