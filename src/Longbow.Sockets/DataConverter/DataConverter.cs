@@ -17,6 +17,7 @@ public class DataConverter<TEntity>(DataConverterCollection converters) : IDataC
     /// </summary>
     public DataConverter() : this(new())
     {
+
     }
 
     /// <summary>
@@ -29,12 +30,16 @@ public class DataConverter<TEntity>(DataConverterCollection converters) : IDataC
     {
         var ret = false;
         entity = default;
-        var v = CreateEntity();
-        if (Parse(data, v))
+        try
         {
-            entity = v;
-            ret = true;
+            var v = CreateEntity();
+            if (Parse(data, v))
+            {
+                entity = v;
+                ret = true;
+            }
         }
+        catch { }
         return ret;
     }
 
