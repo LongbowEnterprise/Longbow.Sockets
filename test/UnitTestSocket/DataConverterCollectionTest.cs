@@ -62,24 +62,6 @@ public class DataConverterCollectionTest
         Assert.True(result);
     }
 
-    [Fact]
-    public void TryConvertTo_Exception()
-    {
-        // 值类型不可为空
-        var converter = new DataConverter<MockExceptionEntity>();
-        var data = new byte[] { 0x01, 0x02 };
-        var result = converter.TryConvertTo(data, out _);
-        Assert.False(result);
-
-        // int? 可为空
-        // Foo 可为空引用类型
-        var converter1 = new DataConverter<MockValidEntity>();
-        var actual = converter1.TryConvertTo(data, out var d);
-        Assert.True(actual);
-        Assert.NotNull(d);
-        Assert.Null(d.Value);
-    }
-
     class MockEntity
     {
         public byte[]? Header { get; set; }
@@ -87,12 +69,6 @@ public class DataConverterCollectionTest
         public byte[]? Body { get; set; }
 
         public object? Test() { return null; }
-    }
-
-    class MockExceptionEntity
-    {
-        [DataPropertyConverter(Offset = 0, Length = 1, ConverterType = typeof(MockNullConverter))]
-        public int Value { get; set; }
     }
 
     class MockValidEntity

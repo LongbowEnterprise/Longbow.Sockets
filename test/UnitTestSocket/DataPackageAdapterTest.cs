@@ -12,7 +12,7 @@ public class DataPackageAdapterTest
         var actual = ReadOnlyMemory<byte>.Empty;
         var adapter = new DataPackageAdapter(new FixLengthDataPackageHandler(5))
         {
-            ReceivedCallBack = async data =>
+            ReceivedCallback = async data =>
             {
                 actual = data;
                 await Task.CompletedTask;
@@ -22,6 +22,20 @@ public class DataPackageAdapterTest
         await adapter.HandlerAsync(new byte[] { 0x04, 0x05 });
 
         Assert.Equal(5, actual.Length);
+
+        // 测试 DataPackageHandler 为空
+        adapter = new DataPackageAdapter()
+        {
+            ReceivedCallback = async data =>
+            {
+                actual = data;
+                await Task.CompletedTask;
+            }
+        };
+
+        actual = ReadOnlyMemory<byte>.Empty;
+        await adapter.HandlerAsync(new byte[] { 0x01, 0x02 });
+        Assert.Equal([0x01, 0x02], actual.ToArray());
     }
 
     [Fact]
