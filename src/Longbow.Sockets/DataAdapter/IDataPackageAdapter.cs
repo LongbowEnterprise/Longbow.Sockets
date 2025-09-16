@@ -18,7 +18,7 @@ public interface IDataPackageAdapter
     /// <remarks>The callback function is expected to handle the received data asynchronously. Ensure that the
     /// implementation of the callback does not block the calling thread and completes promptly to avoid performance
     /// issues.</remarks>
-    Func<ReadOnlyMemory<byte>, ValueTask>? ReceivedCallBack { get; set; }
+    Func<ReadOnlyMemory<byte>, ValueTask>? ReceivedCallback { get; set; }
 
     /// <summary>
     /// Asynchronously receives data from a source and processes it.
