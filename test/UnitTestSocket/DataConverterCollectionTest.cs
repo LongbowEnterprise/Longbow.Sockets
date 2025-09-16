@@ -57,9 +57,32 @@ public class DataConverterCollectionTest
     public void TryConverter_Ok()
     {
         var converter = new DataConverter<MockConvertEntity>();
-        var data = new byte[] { 0x1, 0x2, 0x3, 0x4, 0x5, 0x3, 0x4, 0x31, 0x09, 0x10, 0x40, 0x09, 0x1E, 0xB8, 0x51, 0xEB, 0x85, 0x1F, 0x40, 0x49, 0x0F, 0xDB, 0x23, 0x24, 0x25, 0x26, 0x01, 0x01, 0x29 };
+        var data = new byte[]
+        {
+            0x01, 0x02, 0x03, 0x04, 0x05, 0x03,
+            0x04, 0x31, 0x09, 0x10, 0x40, 0x09,
+            0x1E, 0xB8, 0x51, 0xEB, 0x85, 0x1F,
+            0x40, 0x49, 0x0F, 0xDB, 0x23, 0x24,
+            0x25, 0x26, 0x01, 0x01, 0x29
+        };
         var result = converter.TryConvertTo(data, out _);
         Assert.True(result);
+
+        // 测试内部异常情况
+        var exceptionConverter = new DataConverter<MockExceptionEntity>();
+        result = exceptionConverter.TryConvertTo(new byte[] { 0x01 }, out _);
+        Assert.False(result);
+
+        // 覆盖 IsNullable 单元测试
+        var validConverter = new DataConverter<MockValidEntity>();
+        validConverter.TryConvertTo(new byte[] { 0x01 }, out _);
+        Assert.False(result);
+    }
+
+    class MockExceptionEntity
+    {
+        [DataPropertyConverter(Offset = 0, Length = 1, ConverterType = typeof(MockExceptionConverter))]
+        public int Value { get; set; }
     }
 
     class MockEntity
@@ -69,6 +92,14 @@ public class DataConverterCollectionTest
         public byte[]? Body { get; set; }
 
         public object? Test() { return null; }
+    }
+
+    class MockNullConverter : IDataPropertyConverter
+    {
+        public object? Convert(ReadOnlyMemory<byte> data)
+        {
+            return null;
+        }
     }
 
     class MockValidEntity
@@ -133,11 +164,11 @@ public class DataConverterCollectionTest
         public byte? Value16 { get; set; }
     }
 
-    class MockNullConverter : IDataPropertyConverter
+    class MockExceptionConverter : IDataPropertyConverter
     {
         public object? Convert(ReadOnlyMemory<byte> data)
         {
-            return null;
+            throw new Exception("just test");
         }
     }
 
@@ -146,24 +177,6 @@ public class DataConverterCollectionTest
         public object? Convert(ReadOnlyMemory<byte> data)
         {
             return new Foo() { Id = data.Span[0], Name = name };
-        }
-    }
-
-    class MockLogger : ILogger
-    {
-        public IDisposable? BeginScope<TState>(TState state) where TState : notnull
-        {
-            return null;
-        }
-
-        public bool IsEnabled(LogLevel logLevel)
-        {
-            return true;
-        }
-
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
-        {
-
         }
     }
 }
