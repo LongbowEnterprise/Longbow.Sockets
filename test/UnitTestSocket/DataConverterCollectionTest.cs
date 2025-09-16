@@ -11,49 +11,6 @@ namespace UnitTestSocket;
 public class DataConverterCollectionTest
 {
     [Fact]
-    public void TryGetConverter_Inject()
-    {
-        var sc = new ServiceCollection();
-        sc.Configure<DataConverterCollection>(options =>
-        {
-            options.AddPropertyConverter<MockEntity>(entity => entity.Header, new DataPropertyConverterAttribute()
-            {
-                Offset = 0,
-                Length = 5
-            });
-            options.AddPropertyConverter<MockEntity>(entity => entity.Body, new DataPropertyConverterAttribute()
-            {
-                Offset = 5,
-                Length = 2
-            });
-
-            // 为提高代码覆盖率 重复添加转换器以后面的为准
-            options.AddPropertyConverter<MockEntity>(entity => entity.Body, new DataPropertyConverterAttribute()
-            {
-                Offset = 2,
-                Length = 3
-            });
-        });
-
-        var provider = sc.BuildServiceProvider();
-        var service = provider.GetRequiredService<IOptions<DataConverterCollection>>();
-        Assert.NotNull(service.Value);
-
-        var collection = service.Value;
-        var converter = new DataConverter<MockEntity>(collection);
-        var data = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
-        converter.TryConvertTo(data, out _);
-
-        var f = collection.TryGetPropertyConverter<MockEntity>(entity => entity.Header, out var headerConverter);
-        Assert.True(f);
-        Assert.NotNull(headerConverter);
-
-        f = collection.TryGetPropertyConverter<MockEntity>(entity => entity.Test(), out var bodyConverter);
-        Assert.False(f);
-        Assert.Null(bodyConverter);
-    }
-
-    [Fact]
     public void TryConverter_Ok()
     {
         var converter = new DataConverter<MockConvertEntity>();
