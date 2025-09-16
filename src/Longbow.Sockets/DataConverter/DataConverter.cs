@@ -10,16 +10,8 @@ namespace Longbow.Sockets.DataConverters;
 /// Provides a base class for converting socket data into a specified entity type.
 /// </summary>
 /// <typeparam name="TEntity">The type of entity to convert the socket data into.</typeparam>
-public class DataConverter<TEntity>(DataConverterCollection converters) : IDataConverter<TEntity>
+public class DataConverter<TEntity>(DataConverterCollection? converters = null) : IDataConverter<TEntity>
 {
-    /// <summary>
-    /// 构造函数
-    /// </summary>
-    public DataConverter() : this(new())
-    {
-
-    }
-
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
@@ -86,12 +78,10 @@ public class DataConverter<TEntity>(DataConverterCollection converters) : IDataC
 
     private static bool IsNullable(Type type) => !type.IsValueType || Nullable.GetUnderlyingType(type) != null;
 
-    private static string GetValueType(Type? type) => type?.FullName ?? "NULL";
-
     private DataPropertyConverterAttribute? GetPropertyConverterAttribute(PropertyInfo propertyInfo)
     {
         DataPropertyConverterAttribute? attr = null;
-        if (converters.TryGetPropertyConverter<TEntity>(propertyInfo, out var v))
+        if (converters != null && converters.TryGetPropertyConverter<TEntity>(propertyInfo, out var v))
         {
             attr = v;
         }
