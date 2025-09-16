@@ -5,18 +5,10 @@
 namespace Longbow.Sockets.DataConverters;
 
 /// <summary>
-/// Socket 数据转换器接口
-/// </summary>
-public interface IDataConverter
-{
-
-}
-
-/// <summary>
 /// Defines a method to convert raw socket data into a specified entity type.
 /// </summary>
 /// <typeparam name="TEntity">The type of entity to convert the data into.</typeparam>
-public interface IDataConverter<TEntity> : IDataConverter
+public interface IDataConverter<TEntity>
 {
     /// <summary>
     /// Attempts to convert the specified data to an instance of <typeparamref name="TEntity"/>.

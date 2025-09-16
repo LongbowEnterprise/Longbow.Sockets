@@ -17,7 +17,7 @@ public class DataPackageAdapter(IDataPackageHandler? DataPackageHandler = null) 
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public Func<ReadOnlyMemory<byte>, ValueTask>? ReceivedCallBack { get; set; }
+    public Func<ReadOnlyMemory<byte>, ValueTask>? ReceivedCallback { get; set; }
 
     /// <summary>
     /// <inheritdoc/>
@@ -33,6 +33,10 @@ public class DataPackageAdapter(IDataPackageHandler? DataPackageHandler = null) 
 
             // 如果存在数据处理器则调用其处理方法
             await DataPackageHandler.HandlerAsync(data, token);
+        }
+        else if (ReceivedCallback != null)
+        {
+            await ReceivedCallback(data);
         }
     }
 
@@ -64,10 +68,10 @@ public class DataPackageAdapter(IDataPackageHandler? DataPackageHandler = null) 
     /// <returns></returns>
     protected virtual async ValueTask OnHandlerReceivedCallBack(ReadOnlyMemory<byte> data)
     {
-        if (ReceivedCallBack != null)
+        if (ReceivedCallback != null)
         {
             // 调用接收回调方法处理数据
-            await ReceivedCallBack(data);
+            await ReceivedCallback(data);
         }
     }
 }
