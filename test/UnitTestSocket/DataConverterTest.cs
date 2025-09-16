@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 
 namespace UnitTestSocket;
 
-public class DataConverterCollectionTest
+public class DataConverterTest
 {
     [Fact]
     public void TryConverter_Ok()
@@ -40,15 +40,6 @@ public class DataConverterCollectionTest
     {
         [DataPropertyConverter(Offset = 0, Length = 1, ConverterType = typeof(MockExceptionConverter))]
         public int Value { get; set; }
-    }
-
-    class MockEntity
-    {
-        public byte[]? Header { get; set; }
-
-        public byte[]? Body { get; set; }
-
-        public object? Test() { return null; }
     }
 
     class MockNullConverter : IDataPropertyConverter
